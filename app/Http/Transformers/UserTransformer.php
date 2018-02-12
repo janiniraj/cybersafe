@@ -1,27 +1,40 @@
 <?php
 namespace App\Http\Transformers;
-use App\Http\Transformers\Transformer;
-use URL;
+
+/**
+ * Class UserTransformer
+ * @package App\Http\Transformers
+ */
 class UserTransformer extends Transformer
 {
+    /**
+     * Transform
+     *
+     * @param $data
+     * @return array
+     */
     public function transform($data)
     {
         return [
-            'id'        => $data['id'],
-            'username'  => $this->nulltoBlank($data['username']),
-            'name'      => $this->nulltoBlank($data['name']),
-            'email'     => $this->nulltoBlank($data['email']),
-            'location'  => $this->nulltoBlank($data['location']),
-            'image'     => $data['image'] ? URL::to('/').'/uploads/users/'.$data['image'] : URL::to('/').'/uploads/users/default.png',
-            'is_follow' => (isset($data['is_follow']) && $data['is_follow']) ? 1 : 0
+            'id'            => $data['id'],
+            'name'          => $this->nulltoBlank($data['name']),
+            'phone'         => $this->nulltoBlank($data['phone']),
+            'code'          => $this->nulltoBlank($data['code']),
+            'family_code'   => $this->nulltoBlank($data['family_code']),
+            'is_admin'      => $data['is_admin'],
+            'type'          => $this->nulltoBlank($data['type'])
         ];
     }
 
-    public function transformToken($data)
+    /**
+     * Transform User With Token
+     *
+     * @param $data
+     * @param $token
+     * @return array
+     */
+    public function transformUserWithToken($data, $token)
     {
-        return[
-            'token' => $data['token'],
-            'type'  => $data['type']
-        ];
+        return array_merge($this->transform($data),['token' => $token]);
     }
 }

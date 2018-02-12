@@ -3,7 +3,7 @@
 /**
  * Abstract Class DbRepository
  *
- * @author Justin Bevan justin@smokerschoiceusa.com
+ * @author Niraj Jani jani.niraj@outlook.com
  * @package FTX\Repositories
  */
 

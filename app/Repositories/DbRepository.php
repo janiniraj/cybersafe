@@ -4,7 +4,7 @@
  * Abstract Class DbRepository
  *
  * @author Niraj Jani jani.niraj@outlook.com
- * @package FTX\Repositories
+ * @package App\Repositories
  */
 
 use App\Exceptions\GeneralException;

@@ -30,9 +30,13 @@ class AuthController extends BaseApiController
     {
         //Validate Request
         $validator = Validator::make($request->all(), [
-            'phone'     => 'required',
-            'password'  => 'required',
-            'name'      => 'required'
+            'phone'             => 'required',
+            'password'          => 'required',
+            'name'              => 'required',
+            'home_latitude'     => 'required',
+            'home_longitude'    => 'required',
+            'home_address_name' => 'required',
+            'home_address'      => 'required'
         ]);
 
         if ($validator->fails())

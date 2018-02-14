@@ -27,5 +27,6 @@ Route::group(['namespace' => 'API', 'as' => 'api.'], function () {
     Route::group(['middleware' => ['jwt.auth']], function() {
         Route::post('send-location', 'UserLocationController@add');
         Route::get('fetch-locations/{id}', 'UserLocationController@fetchLocation');
+        Route::get('profile', 'UserController@profile');
     });
 });

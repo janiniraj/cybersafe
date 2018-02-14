@@ -1,6 +1,7 @@
 <?php namespace App\Repositories\User;
 
 use App\Models\User\User;
+use App\Models\UserAddress\UserAddress;
 use App\Repositories\DbRepository;
 use App\Exceptions\GeneralException;
 
@@ -26,7 +27,8 @@ class EloquentUserRepository extends DbRepository implements UserRepositoryContr
 	 */
 	public function __construct()
 	{
-		$this->model = new User;
+		$this->model    = new User;
+		$this->address  = new UserAddress;
 	}
 
 	/**
@@ -181,6 +183,14 @@ class EloquentUserRepository extends DbRepository implements UserRepositoryContr
 
         if($model)
         {
+            $this->address->create([
+                'user_id'       => $model->id,
+                'latitude'      => $data['home_latitude'],
+                'longitude'     => $data['home_longitude'],
+                'address_name'  => $data['home_address_name'],
+                'address'       => $data['home_address']
+            ]);
+
             if(!empty($guardians))
             {
                 $this->saveGuardiansOrChildren($guardians, 'parent', $model->family_code, $model->id);
@@ -254,5 +264,10 @@ class EloquentUserRepository extends DbRepository implements UserRepositoryContr
     public function fetchFamilyDataByFamilyCode($familyCode)
     {
         return $this->model->where('family_code', $familyCode)->get();
+    }
+
+    public function findHomeAddress($familyCode)
+    {
+        return $this->model->where(['family_code' => $familyCode, 'is_admin' => 1])->first()->address;
     }
 }

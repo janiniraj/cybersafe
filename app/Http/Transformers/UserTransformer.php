@@ -37,4 +37,20 @@ class UserTransformer extends Transformer
     {
         return array_merge($this->transform($data),['token' => $token]);
     }
+
+    /**
+     * Transform Home Location
+     *
+     * @param $data
+     * @return array
+     */
+    public function transformHomeLocation($data)
+    {
+        return [
+            'latitude'      => $this->nulltoBlank($data['latitude']),
+            'longitude'     => $this->nulltoBlank($data['longitude']),
+            'address_name'  => $this->nulltoBlank($data['address_name']),
+            'address'       => $this->nulltoBlank($data['address'])
+        ];
+    }
 }

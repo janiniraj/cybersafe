@@ -152,6 +152,17 @@ class AuthController extends BaseApiController
             $transformedUserData            = $this->transformer->transformUserWithToken($user->toArray(), $token);
             $transformedUserData['family']  = $this->transformer->transformCollection($familyData);
 
+            if($user->is_admin)
+            {
+                $homeData = $user->address;
+            }
+            else
+            {
+                $homeData = $this->userRepository->findHomeAddress($user->family_code);
+            }
+
+            $transformedUserData['home']    = $this->transformer->transformHomeLocation($homeData);
+
             $this->userRepository->updateDeviceToke($user->id, $request->header('devicetype'), $request->header('devicetoken'));
         }
         catch (JWTException $e)
@@ -201,8 +212,11 @@ class AuthController extends BaseApiController
      */
     public function fetchFamily(Request $request, $code)
     {
-        $familyData = $this->userRepository->fetchFamilyDataByCode($code)->toArray();
-        return $this->successResponse($this->transformer->transformCollection($familyData));
+        $familyData                     = $this->userRepository->fetchFamilyDataByCode($code)->toArray();
+        $homeData                       = $this->userRepository->findHomeAddress($familyData[0]['family_code']);
+        $transformedUserData['family']  = $this->transformer->transformCollection($familyData);
+        $transformedUserData['home']    = $this->transformer->transformHomeLocation($homeData);
+        return $this->successResponse($transformedUserData);
     }
 
     /**

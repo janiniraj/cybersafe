@@ -266,8 +266,37 @@ class EloquentUserRepository extends DbRepository implements UserRepositoryContr
         return $this->model->where('family_code', $familyCode)->get();
     }
 
+    /**
+     * Find Home Address
+     *
+     * @param $familyCode
+     * @return mixed
+     */
     public function findHomeAddress($familyCode)
     {
         return $this->model->where(['family_code' => $familyCode, 'is_admin' => 1])->first()->address;
+    }
+
+    /**
+     * Update Device Token
+     *
+     * @param $userId
+     * @param $deviceType
+     * @param $deviceToken
+     * @return bool
+     */
+    public function updateDeviceToke($userId, $deviceType, $deviceToken)
+    {
+        return $this->model->where('id', $userId)->update([
+            'device_type'   => $deviceType,
+            'device_token'  => $deviceToken
+        ]);
+    }
+
+    public function updateChatRoomId($chatroomId, $familyCode)
+    {
+        return $this->model->where('family_code', $familyCode)->update([
+            'chatroom_id'   => $chatroomId
+        ]);
     }
 }

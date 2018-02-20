@@ -22,7 +22,8 @@ class UserTransformer extends Transformer
             'code'          => $this->nulltoBlank($data['code']),
             'family_code'   => $this->nulltoBlank($data['family_code']),
             'is_admin'      => $data['is_admin'],
-            'type'          => $this->nulltoBlank($data['type'])
+            'type'          => $this->nulltoBlank($data['type']),
+            'chatroom_id'   => $this->nulltoBlank($data['chatroom_id'])
         ];
     }
 

@@ -36,8 +36,11 @@ class User extends Authenticatable
         'status',
         'is_admin',
         'family_code',
+        'chatroom_id',
         'email',
         'password',
+        'device_type',
+        'device_token',
         'remember_token',
         'created_at',
         'updated_at'

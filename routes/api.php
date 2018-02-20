@@ -23,10 +23,12 @@ Route::group(['namespace' => 'API', 'as' => 'api.'], function () {
     Route::post('login', 'AuthController@AdminLogin');
     Route::get('fetch-family/{code}', 'AuthController@fetchFamily');
     Route::get('login/{code}', 'AuthController@login');
+    Route::post('notification-test', 'AuthController@notificationTest');
 
     Route::group(['middleware' => ['jwt.auth']], function() {
         Route::post('send-location', 'UserLocationController@add');
         Route::get('fetch-locations/{id}', 'UserLocationController@fetchLocation');
         Route::get('profile', 'UserController@profile');
+        Route::get('add-chatroom-id/{id}', 'UserController@addChatRoomId');
     });
 });

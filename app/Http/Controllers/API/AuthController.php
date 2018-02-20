@@ -7,6 +7,7 @@ use App\Http\Transformers\UserTransformer;
 use JWTAuth;
 use Tymon\JWTAuth\Exceptions\JWTException;
 use Auth;
+use App\Http\Utilities\PushNotification;
 
 class AuthController extends BaseApiController
 {
@@ -44,8 +45,15 @@ class AuthController extends BaseApiController
             return $this->failureResponse([], 'Invalid Input Parameters.');
         }
 
+        if(!($request->header('devicetype') && $request->header('devicetoken')))
+        {
+            return $this->failureResponse([], 'Invalid Header Parameters.');
+        }
+
         //Define data and check for Duplicate
         $data                   = $request->all();
+        $data['device_type']    = $request->header('devicetype');
+        $data['device_token']   = $request->header('devicetoken');
         $guardians              = isset($data['guardians']) ? json_decode($data['guardians'], true) : [];
         $children               = isset($data['children']) ? json_decode($data['children'], true) : [];
         $phoneNumberList        = [$data['phone']];
@@ -106,7 +114,7 @@ class AuthController extends BaseApiController
 
         $admin = $this->userRepository->createParent($data);
 
-        return $this->login($admin->code, 'Registration Successful.');
+        return $this->login($admin->code, 'Registration Successful.', $request);
     }
 
     /**
@@ -114,14 +122,21 @@ class AuthController extends BaseApiController
      *
      * @param $code
      * @param null $message
+     * @param Request $request
      * @return json|string
      */
-    public function login($code, $message = null)
+    public function login($code, $message = null, Request $request)
     {
         if (!$code)
         {
             return $this->failureResponse([], 'Invalid Input Parameters.');
         }
+
+        if(!($request->header('devicetype') && $request->header('devicetoken')))
+        {
+            return $this->failureResponse([], 'Invalid Header Parameters.');
+        }
+
 
         $user = $this->userRepository->getByCode($code);
 
@@ -136,6 +151,8 @@ class AuthController extends BaseApiController
             $familyData                     = $this->userRepository->fetchFamilyDataByFamilyCode($user->family_code)->toArray();
             $transformedUserData            = $this->transformer->transformUserWithToken($user->toArray(), $token);
             $transformedUserData['family']  = $this->transformer->transformCollection($familyData);
+
+            $this->userRepository->updateDeviceToke($user->id, $request->header('devicetype'), $request->header('devicetoken'));
         }
         catch (JWTException $e)
         {
@@ -172,7 +189,7 @@ class AuthController extends BaseApiController
             return $this->failureResponse([], 'Invalid Credentials provided.');
         }
 
-        return $this->login(Auth::user()->code);
+        return $this->login(Auth::user()->code, 'Login Successful', $request);
     }
 
     /**
@@ -186,5 +203,52 @@ class AuthController extends BaseApiController
     {
         $familyData = $this->userRepository->fetchFamilyDataByCode($code)->toArray();
         return $this->successResponse($this->transformer->transformCollection($familyData));
+    }
+
+    /**
+     * Notification Test
+     *
+     * @param Request $request
+     */
+    public function notificationTest(Request $request)
+    {
+        $notificationClass = new PushNotification();
+        $data = $request->all();
+        $notificationClass->_pushNotification($data['message'], 'android', $data['devicetoken']);
+
+        /*$registrationIds = $data['devicetoken'];
+        #prep the bundle
+        $msg = array
+        (
+            'body' 	=> $data['message'],
+            'title'	=> $data['message'],
+            'icon'	=> 'myicon',
+            'sound' => 'mySound'
+        );
+        $fields = array
+        (
+            'to'		=> $registrationIds,
+            'notification'	=> $msg
+        );
+
+
+        $headers = array
+        (
+            'Authorization: key=' . env('ANDROID_KEY'),
+            'Content-Type: application/json'
+        );
+        #Send Reponse To FireBase Server
+        $ch = curl_init();
+        curl_setopt( $ch,CURLOPT_URL, 'https://fcm.googleapis.com/fcm/send' );
+        curl_setopt( $ch,CURLOPT_POST, true );
+        curl_setopt( $ch,CURLOPT_HTTPHEADER, $headers );
+        curl_setopt( $ch,CURLOPT_RETURNTRANSFER, true );
+        curl_setopt( $ch,CURLOPT_SSL_VERIFYPEER, false );
+        curl_setopt( $ch,CURLOPT_POSTFIELDS, json_encode( $fields ) );
+        $result = curl_exec($ch );
+        curl_close( $ch );*/
+
+        dd('end');
+
     }
 }

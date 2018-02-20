@@ -45,6 +45,22 @@ class UserController extends BaseApiController
         return $this->successResponse($transformedUserData);
     }
 
+    public function addChatRoomId($chatroomId, Request $request)
+    {
+        $user = Auth::user();
+
+        $result = $this->userRepository->updateChatRoomId($chatroomId, $user->family_code);
+        if($result)
+        {
+            return $this->profile($request);
+        }
+        else
+        {
+            return $this->failureResponse([], 'Error in adding Chatroom Id.');
+        }
+    }
+
+
     /**
      * Fetch Family
      *

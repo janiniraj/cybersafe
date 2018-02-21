@@ -140,7 +140,7 @@ class EloquentUserLocationRepository extends DbRepository implements UserLocatio
      */
     public function getAllByUser($userId, $limit, $sort = 'desc')
     {
-        $result = $this->model->where('user_id', $userId)->orderBy('id', $sort);
+        $result = $this->model->where('user_id', $userId)->groupBy('address_name')->orderBy('id', $sort);
 
         if($limit)
         {
@@ -150,4 +150,35 @@ class EloquentUserLocationRepository extends DbRepository implements UserLocatio
         return $result->get();
     }
 
+    /**
+     * Fetch Recent Family Locations
+     *
+     * @param $familyCode
+     * @return \Illuminate\Support\Collection
+     */
+    public function getRecentFamilyLocations($familyCode)
+    {
+        $result = $this->model
+            ->select('user_locations.*', 'users.name', 'users.code')
+            ->join('users', 'users.id', '=', 'user_locations.user_id')
+            ->where('family_code', $familyCode)
+            ->groupBy('user_locations.user_id')
+            ->orderBy('id', 'DESC')
+            ->get();
+
+        return $result;
+    }
+
+    public function getRecentLocationByUserCode($code)
+    {
+        $result = $this->model
+            ->select('user_locations.*', 'users.name', 'users.code')
+            ->join('users', 'users.id', '=', 'user_locations.user_id')
+            ->where('code', $code)
+            ->groupBy('user_locations.user_id')
+            ->orderBy('id', 'DESC')
+            ->first();
+
+        return $result;
+    }
 }

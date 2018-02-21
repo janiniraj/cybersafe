@@ -4,6 +4,7 @@ use App\Models\User\User;
 use App\Models\UserAddress\UserAddress;
 use App\Repositories\DbRepository;
 use App\Exceptions\GeneralException;
+use App\Models\Emergency\Emergency;
 
 class EloquentUserRepository extends DbRepository implements UserRepositoryContract
 {
@@ -27,8 +28,9 @@ class EloquentUserRepository extends DbRepository implements UserRepositoryContr
 	 */
 	public function __construct()
 	{
-		$this->model    = new User;
-		$this->address  = new UserAddress;
+		$this->model        = new User;
+		$this->address      = new UserAddress;
+		$this->emergency    = new Emergency;
 	}
 
 	/**
@@ -244,6 +246,17 @@ class EloquentUserRepository extends DbRepository implements UserRepositoryContr
     }
 
     /**
+     * Get User By Code
+     *
+     * @param $code
+     * @return \Illuminate\Database\Eloquent\Model|null|static
+     */
+    public function getUserByCode($code)
+    {
+        return $this->model->where('code', $code)->first();
+    }
+
+    /**
      * Fetch Family Data By Code
      *
      * @param $code
@@ -293,10 +306,76 @@ class EloquentUserRepository extends DbRepository implements UserRepositoryContr
         ]);
     }
 
+    /**
+     * Update Chat room Id
+     *
+     * @param $chatroomId
+     * @param $familyCode
+     * @return bool
+     */
     public function updateChatRoomId($chatroomId, $familyCode)
     {
         return $this->model->where('family_code', $familyCode)->update([
             'chatroom_id'   => $chatroomId
+        ]);
+    }
+
+    /**
+     * Get Parents
+     *
+     * @param $familyCode
+     * @return \Illuminate\Support\Collection
+     */
+    public function getParents($familyCode)
+    {
+        return $this->model->where([
+            'type'          => 'parent',
+            'family_code'   => $familyCode
+        ])->get();
+    }
+
+    /**
+     * Check for Emergency
+     *
+     * @param $userId
+     * @return bool
+     */
+    public function checkForEmergency($userId)
+    {
+        $result = $this->emergency->where(['user_id' => $userId, 'dismiss' => 0])->count();
+
+        return $result > 0 ? true : false;
+    }
+
+    /**
+     * Create Emergency
+     *
+     * @param $userId
+     * @return $this|\Illuminate\Database\Eloquent\Model
+     */
+    public function createEmergency($userId)
+    {
+        return $this->emergency->create([
+            'user_id' => $userId,
+            'dismiss' => 0
+        ]);
+    }
+
+    /**
+     * Dismiss Emergency
+     *
+     * @param $userId
+     * @param $dismissUserId
+     * @return bool
+     */
+    public function dismissEmergency($userId, $dismissUserId)
+    {
+        return $this->emergency->where([
+            'user_id' => $userId,
+            'dismiss' => 0
+        ])->update([
+            'dismiss' => 1,
+            'dismissed_by' => $dismissUserId
         ]);
     }
 }

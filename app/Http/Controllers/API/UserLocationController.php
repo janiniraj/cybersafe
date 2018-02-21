@@ -66,4 +66,33 @@ class UserLocationController extends BaseApiController
 
         return $this->successResponse($this->transformer->transformCollection($data));
     }
+
+    /**
+     * Fetch Recent Family Locations
+     *
+     * @param Request $request
+     * @return json|string
+     */
+    public function fetchRecentLocationOfFamily(Request $request)
+    {
+        $user = Auth::user();
+
+        $data = $this->repository->getRecentFamilyLocations($user->family_code)->toArray();
+
+        return $this->successResponse($this->transformer->transformCollection($data, 'transformFamily'));
+    }
+
+    /**
+     * Fetch Recent Location of User
+     *
+     * @param $code
+     * @param Request $request
+     * @return json|string
+     */
+    public function fetchRecentLocation($code, Request $request)
+    {
+        $data = $this->repository->getRecentLocationByUserCode($code)->toArray();
+
+        return $this->successResponse($this->transformer->transformFamily($data));
+    }
 }

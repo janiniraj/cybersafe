@@ -30,5 +30,11 @@ Route::group(['namespace' => 'API', 'as' => 'api.'], function () {
         Route::get('fetch-locations/{id}', 'UserLocationController@fetchLocation');
         Route::get('profile', 'UserController@profile');
         Route::get('add-chatroom-id/{id}', 'UserController@addChatRoomId');
+        Route::get('fetch-recent-locations', 'UserLocationController@fetchRecentLocationOfFamily');
+        Route::get('fetch-recent-location/{code}', 'UserLocationController@fetchRecentLocation');
+
+        Route::get('emergency', 'UserController@emergency');
+
+        Route::get('dismiss-emergency/{code}', 'UserController@dismissEmergency');
     });
 });

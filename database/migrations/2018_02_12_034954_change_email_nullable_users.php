@@ -14,7 +14,7 @@ class ChangeEmailNullableUsers extends Migration
     public function up()
     {
         DB::statement('ALTER TABLE users CHANGE email email VARCHAR(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL');
-        DB::statement('ALTER TABLE users DROP INDEX users_email_unique');
+        //DB::statement('ALTER TABLE users DROP INDEX users_email_unique');
     }
 
     /**

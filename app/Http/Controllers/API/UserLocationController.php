@@ -32,7 +32,8 @@ class UserLocationController extends BaseApiController
         $validator = Validator::make($request->all(), [
             'latitude'     => 'required',
             'longitude'    => 'required',
-            'address'      => 'required'
+            'address'      => 'required',
+            'address_name' => 'required'
         ]);
 
         if ($validator->fails())

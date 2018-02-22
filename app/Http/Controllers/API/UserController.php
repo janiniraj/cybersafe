@@ -6,6 +6,7 @@ use App\Repositories\User\EloquentUserRepository;
 use App\Http\Transformers\UserTransformer;
 use Auth;
 use App\Http\Utilities\PushNotification;
+use App\Repositories\UserLocation\EloquentUserLocationRepository;
 
 class UserController extends BaseApiController
 {
@@ -18,6 +19,7 @@ class UserController extends BaseApiController
         $this->userRepository   = new EloquentUserRepository();
         $this->transformer      = new UserTransformer();
         $this->notification     = new PushNotification;
+        $this->locationRepository = new EloquentUserLocationRepository;
     }
 
     /**
@@ -46,7 +48,13 @@ class UserController extends BaseApiController
 
         foreach($transformedUserData['family'] as $key => $value)
         {
-            $transformedUserData['family'][$key]['emergency'] = $this->userRepository->checkForEmergency($value['id']);
+            $lastLocation = $this->locationRepository->getRecentLocationByUserCode($value['code']);
+            if($lastLocation)
+            {
+                $lastLocation = $lastLocation->toArray();
+            }
+            $transformedUserData['family'][$key]['recentLocation']  = $this->transformer->tranformLocation($lastLocation);
+            $transformedUserData['family'][$key]['emergency']       = $this->userRepository->checkForEmergency($value['id']);
         }
         
         return $this->successResponse($transformedUserData);

@@ -54,4 +54,17 @@ class UserTransformer extends Transformer
             'address'       => $this->nulltoBlank($data['address'])
         ];
     }
+
+    public function tranformLocation($data)
+    {
+        return [
+            'id'            => $this->nulltoBlank($data['id']),
+            'user_id'       => $this->nulltoBlank($data['user_id']),
+            'latitude'      => $this->nulltoBlank($data['latitude']),
+            'longitude'     => $this->nulltoBlank($data['longitude']),
+            'address_name'  => $this->nulltoBlank($data['address_name']),
+            'address'       => $this->nulltoBlank($data['address']),
+            'created_at'    => $this->nulltoBlank($data['created_at'])
+        ];
+    }
 }

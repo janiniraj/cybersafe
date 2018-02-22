@@ -181,7 +181,6 @@ class EloquentUserLocationRepository extends DbRepository implements UserLocatio
             ->select('user_locations.*', 'users.name', 'users.code')
             ->join('users', 'users.id', '=', 'user_locations.user_id')
             ->where('code', $code)
-            ->groupBy('user_locations.user_id')
             ->orderBy('id', 'DESC')
             ->first();
 

@@ -55,8 +55,8 @@ class PushNotification {
         (
             'body' 	=> $msg,
             'title'	=> $msg,
-            'icon'	=> 'myicon',/*Default Icon*/
-            'sound' => 'mySound'/*Default sound*/
+            'icon'	=> 'ic_notification',/*Default Icon*/
+            //'sound' => 'mySound'/*Default sound*/
         );
         $fields = array
         (

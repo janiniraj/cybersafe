@@ -7,6 +7,7 @@ use App\Http\Transformers\UserLocationTransformer;
 use JWTAuth;
 use Tymon\JWTAuth\Exceptions\JWTException;
 use Auth;
+use App\Repositories\User\EloquentUserRepository;
 
 class UserLocationController extends BaseApiController
 {
@@ -18,6 +19,7 @@ class UserLocationController extends BaseApiController
     {
         $this->repository   = new EloquentUserLocationRepository();
         $this->transformer  = new UserLocationTransformer();
+        $this->userRepository = new EloquentUserRepository();
     }
 
     /**
@@ -32,8 +34,8 @@ class UserLocationController extends BaseApiController
         $validator = Validator::make($request->all(), [
             'latitude'     => 'required',
             'longitude'    => 'required',
-            'address'      => 'required',
-            'address_name' => 'required'
+            //'address'      => 'required',
+            //'address_name' => 'required'
         ]);
 
         if ($validator->fails())
@@ -58,12 +60,13 @@ class UserLocationController extends BaseApiController
      * Fetch Location
      *
      * @param Request $request
-     * @param $userId
+     * @param $userCode
      * @return json|string
      */
-    public function fetchLocation(Request $request, $userId)
+    public function fetchLocation(Request $request, $userCode)
     {
-        $data = $this->repository->getAllByUser($userId, env('LOCATION_RECORD_LIMIT'))->toArray();
+        $userData = $this->userRepository->getUserByCode($userCode);
+        $data = $this->repository->getAllByUser($userData->id, env('LOCATION_RECORD_LIMIT'))->toArray();
 
         return $this->successResponse($this->transformer->transformCollection($data));
     }

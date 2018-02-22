@@ -140,7 +140,13 @@ class EloquentUserLocationRepository extends DbRepository implements UserLocatio
      */
     public function getAllByUser($userId, $limit, $sort = 'desc')
     {
-        $result = $this->model->where('user_id', $userId)->groupBy('address_name')->orderBy('id', $sort);
+        $result = $this->model->where([
+            ['user_id', '=', $userId],
+            ['address_name', '!=', 'null'],
+            ['address_name', '!=', ''],
+            ['address', '!=', 'null'],
+            ['address', '!=', '']
+        ])->groupBy('address_name')->orderBy('id', $sort);
 
         if($limit)
         {

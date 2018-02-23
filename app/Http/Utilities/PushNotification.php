@@ -51,6 +51,9 @@ class PushNotification {
 	 */
     public function _pushToAndroid($registrationIds, $msg, $otherFields = null)
     {
+        //$googleToken = env('ANDROID_KEY');
+        $googleToken = 'AAAAM_8x7To:APA91bEf4YVgAS0-9-ipTFAk71vFFmsZ9XB_XFqSTqcwXlofrfFj-MaRTIFT7vZ8qRgQu5_XOAb6TqDDI0NqdwrHUzyaRPoNliegU7LYMNd50X0_P1xUsq8rGlzkh4_VfJtwHE_IQNh8';
+
         $msgArray = array
         (
             'body' 	=> $msg,
@@ -71,7 +74,7 @@ class PushNotification {
 
         $headers = array
         (
-            'Authorization: key=' . env('ANDROID_KEY'),
+            'Authorization: key=' . $googleToken,
             'Content-Type: application/json'
         );
 
@@ -96,7 +99,7 @@ class PushNotification {
             }
         }
         curl_close($ch);
-
+        dd($headers);
         return true;
     }
 

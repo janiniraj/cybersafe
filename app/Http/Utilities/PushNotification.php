@@ -99,7 +99,6 @@ class PushNotification {
             }
         }
         curl_close($ch);
-        dd($headers);
         return true;
     }
 

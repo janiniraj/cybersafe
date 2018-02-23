@@ -49,7 +49,7 @@ class UserController extends BaseApiController
         foreach($transformedUserData['family'] as $key => $value)
         {
             $lastLocation = $this->locationRepository->getRecentLocationByUserCode($value['code']);
-            if($lastLocation)
+            if(!empty($lastLocation))
             {
                 $lastLocation = $lastLocation->toArray();
             }

@@ -95,7 +95,12 @@ class UserLocationController extends BaseApiController
      */
     public function fetchRecentLocation($code, Request $request)
     {
-        $data = $this->repository->getRecentLocationByUserCode($code)->toArray();
+        $data = $this->repository->getRecentLocationByUserCode($code);
+
+        if(!empty($data))
+        {
+            $data = $data->toArray();
+        }
 
         return $this->successResponse($this->transformer->transformFamily($data));
     }

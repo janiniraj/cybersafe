@@ -146,7 +146,7 @@ class EloquentUserLocationRepository extends DbRepository implements UserLocatio
             ['address_name', '!=', ''],
             ['address', '!=', 'null'],
             ['address', '!=', '']
-        ])->groupBy('address_name')->orderBy('id', $sort);
+        ])->groupBy('address_name')->orderBy('user_locations.id', $sort);
 
         if($limit)
         {
@@ -169,7 +169,7 @@ class EloquentUserLocationRepository extends DbRepository implements UserLocatio
             ->join('users', 'users.id', '=', 'user_locations.user_id')
             ->where('family_code', $familyCode)
             ->groupBy('user_locations.user_id')
-            ->orderBy('id', 'DESC')
+            ->orderBy('user_locations.id', 'DESC')
             ->get();
 
         return $result;
@@ -181,7 +181,7 @@ class EloquentUserLocationRepository extends DbRepository implements UserLocatio
             ->select('user_locations.*', 'users.name', 'users.code')
             ->join('users', 'users.id', '=', 'user_locations.user_id')
             ->where('code', $code)
-            ->orderBy('id', 'DESC')
+            ->orderBy('user_locations.id', 'DESC')
             ->first();
 
         return $result;
